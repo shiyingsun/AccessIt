@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Pavillion{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <section class = "images">
+    <image src="{{url_for('static',filename = 'images/pavilion.jpg')}}"></image>
+  </section>
+{% endblock %}
