@@ -11,22 +11,43 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
+    containsNumber = False
+    containsLetter = False
+    containsCapital = False
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        email = request.form['email']
         db = get_db()
         error = None
 
         if not username:
             error = 'Username is required.'
+        elif not email:
+            error = 'Email is required'
         elif not password:
             error = 'Password is required.'
+
+        if len(password) < 8:
+            error = 'Password too short'
+
+        for i in password:
+            if i.isdigit():
+                containsNumber = True
+            if i.isupper():
+                containsCapital = True
+
+        if not containsNumber:
+            error = 'Password needs to contain a number'
+
+        if not containsCapital:
+            error = 'Password needs to contain a capital'
 
         if error is None:
             try:
                 db.execute(
-                    "INSERT INTO user (username, password) VALUES (?, ?)",
-                    (username, generate_password_hash(password)),
+                    "INSERT INTO user (username, password, email) VALUES (?, ?, ?)",
+                    (username, generate_password_hash(password), email),
                 )
                 db.commit()
             except db.IntegrityError:
