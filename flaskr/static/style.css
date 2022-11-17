@@ -1,5 +1,5 @@
 html { font-family: sans-serif; background: #eee; padding: 1rem; }
-body { max-width: 960px; margin: 0 auto; background: white; }
+body {margin: 0 auto; background: white; }
 h1 { font-family: serif; color: #000000; margin: 1rem 0; }
 h3 { font-family: serif; color: #000000; margin: 1rem 0; }
 a { color: #284B63; }
@@ -40,7 +40,7 @@ nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
 }
 
 .submit_button:hover {
-  background-color: #3C6E71; /* Green */
+  background-color: #3C6E71;
   color: white;
 }
 ul {
@@ -82,10 +82,17 @@ li a:hover {
   color: white;
   font-size: 30px;
 }
+.authentication{
+  max-width: 960px;
+}
 .images {  display: block;
   margin-left: auto;
   margin-right: auto;
   width: 50%;}
+
+.requirements{
+  color:#3c3c3c;
+}
 
 input.danger { color: #cc2f2e; }
 input[type=submit] { align-self: start; min-width: 10em; }
