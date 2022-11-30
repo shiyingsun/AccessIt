@@ -16,5 +16,9 @@
   <hr>
   <form action="{{ url_for('blog.delete', id=post['id']) }}" method="post">
     <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+    <div class="alert">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        Are you sure you want to delete?
+    </div>
   </form>
 {% endblock %}

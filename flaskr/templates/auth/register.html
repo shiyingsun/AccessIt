@@ -1,21 +1,24 @@
 {% extends 'base.html' %}
 
 {% block header %}
+    <!--This is the title of the page-->
     <h1>{% block title %}Register{% endblock %}</h1>
     <br>
     <h3>To help us make the world more accessible today!</h3>
 {% endblock %}
 
 {% block content %}
+    <!--This block is the inputs needed to register a new account-->
   <form method="post" id="authentication">
       <label for="username">Username</label>
       <input name="username" id="username" required>
-      <!--<label for="email">Email</label>
-      <input name="email" id ="email" required>-->
+
       <label for="password">Password</label>
       <input type="password" name="password" id="password" required>
+
       <p id="requirements"><i>Password must at least have:<b> 8 characters, a number and a capital letter</b></i></p>
       <input class="submit_button" type="submit" value="Register">
   </form>
+    <!--This is the link to the login page-->
     <p>Already have an account? <a href="{{ url_for('auth.login') }}">Log in here!</a></p>
 {% endblock %}

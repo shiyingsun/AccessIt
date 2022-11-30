@@ -1,18 +1,23 @@
 {% extends 'base.html' %}
 
 {% block header %}
+    <!--This is the title of the page -->
     <h1>{% block title %}Log In{% endblock %}</h1>
     <br>
     <h3>To continue to help the world become more accessible!</h3>
 {% endblock %}
 
 {% block content %}
+    <!--This block of the inputs the user needs to put in-->
   <form method="post">
     <label for="username">Username</label>
     <input name="username" id="username" required>
+
     <label for="password">Password</label>
     <input type="password" name="password" id="password" required>
+
     <input class = "submit_button" type="submit" value="Log In">
   </form>
-    <p>New user? <a href="{{ url_for('auth.register') }}">register here!</a></p>
+    <!--This links to the registration page-->
+    <p>New user? <a href="{{ url_for('auth.register') }}">Register here!</a></p>
 {% endblock %}
