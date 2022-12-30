@@ -8,6 +8,7 @@ from flaskr.db import get_db
 
 bp = Blueprint('blog', __name__)
 
+
 @bp.route('/')
 def index():
     db = get_db()
@@ -17,6 +18,7 @@ def index():
         ' ORDER BY created DESC'
     ).fetchall()
     return render_template('blog/index.html', posts=posts)
+
 
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
@@ -43,6 +45,7 @@ def create():
 
     return render_template('blog/create.html')
 
+
 def get_post(id, check_author=True):
     post = get_db().execute(
         'SELECT p.id, title, body, created, author_id, username'
@@ -58,6 +61,7 @@ def get_post(id, check_author=True):
         abort(403)
 
     return post
+
 
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
@@ -86,6 +90,7 @@ def update(id):
 
     return render_template('blog/update.html', post=post)
 
+
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
 def delete(id):
@@ -94,3 +99,23 @@ def delete(id):
     db.execute('DELETE FROM post WHERE id = ?', (id,))
     db.commit()
     return redirect(url_for('blog.index'))
+
+
+@bp.route('/googlemaps')
+def googlemaps():
+    return render_template('blog/googlemaps.html')
+    return redirect(url_for('blog.index'))
+
+
+@bp.route('/', methods=('POST',))
+@login_required
+def voting(reputation):
+    if request.method == 'POST':
+        if request.form['votebutton'] == 'upvote':
+            reputation += 1
+            print(reputation)
+        elif request.form['votebutton'] == 'downvote':
+            if reputation >= 0:
+                reputation -= 1
+                print(reputation)
+        return reputation
