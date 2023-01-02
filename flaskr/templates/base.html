@@ -9,15 +9,15 @@
 <nav>
   <ul>
     {% if g.user %}
-        <li id="showing_user"><span>Welcome, {{ g.user['username'] }}!</span></li>
-        <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
-        <li><a href="{{ url_for('blog.index') }}">Posts</a></li>
-        <li><a href="{{ url_for('blog.googlemaps') }}">Google Maps</a></li>
+        <li class = "navbar" id="showing_user"><span>Welcome, {{ g.user['username'] }}!</span></li>
+        <li class = "navbar"><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+        <li class = "navbar"><a href="{{ url_for('blog.index') }}">Posts</a></li>
+        <li class = "navbar"><a href="{{ url_for('blog.googlemaps') }}">Google Maps</a></li>
     {% else %}
-        <li><a href="{{ url_for('auth.register') }}">Register</a></li>
-        <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
-        <li><a href="{{ url_for('blog.index') }}">Posts</a></li>
-        <li><a href="{{ url_for('blog.googlemaps') }}">Google Maps</a></li>
+        <li class = "navbar"><a href="{{ url_for('auth.register') }}">Register</a></li>
+        <li class = "navbar"><a href="{{ url_for('auth.login') }}">Log In</a></li>
+        <li class = "navbar"><a href="{{ url_for('blog.index') }}">Posts</a></li>
+        <li class = "navbar"><a href="{{ url_for('blog.googlemaps') }}">Google Maps</a></li>
     {% endif %}
   </ul>
 </nav>

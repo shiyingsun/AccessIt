@@ -1,5 +1,9 @@
 html { font-family: sans-serif; background: #eee; padding: 1rem; }
-body {margin: 0 auto; background: white; }
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 h1 { font-family: serif; color: #000000; margin: 1rem 0; }
 h3 { font-family: serif; color: #000000; margin: 1rem 0; }
 a { color: #284B63; }
@@ -43,19 +47,23 @@ ul {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: #333;
+  background-color:#333333;
 }
 
-li {
+li.navbar {
   float: left;
 }
 
-li a {
+li.navbar a {
   display: block;
   color: white;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
+}
+
+li.navbar a:hover {
+  background-color: #111111;
 }
 
 #showing_user{
@@ -67,9 +75,6 @@ li a {
   float:right;
 }
 
-li a:hover {
-  background-color: #111;
-}
 .header {
   padding: 60px;
   text-align: center;
@@ -80,10 +85,6 @@ li a:hover {
 .authentication{
   max-width: 960px;
 }
-.images {  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 50%;}
 
 .requirements{
   color:#3C3C3C;
@@ -144,9 +145,82 @@ li a:hover {
   text-align: right;
 }
 
-#map {
+input.danger { color: #cc2f2e; }
+input[type=submit] { align-self: start; min-width: 10em; }
+
+#container {
+  height: 100%;
+  display: flex;
+}
+
+#sidebar {
+  flex-basis: 5rem;
+  flex-grow: 1;
+  padding: 1rem;
+  max-width: 30rem;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: scroll;
+}
+
+#googleMap {
+  flex-basis: 0;
+  flex-grow: 4;
   height: 100%;
 }
 
-input.danger { color: #cc2f2e; }
-input[type=submit] { align-self: start; min-width: 10em; }
+#sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin: 0 0 5px 0;
+  flex-grow: 0;
+}
+
+ul#places {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: scroll;
+  flex-grow: 1;
+}
+
+li {
+  background-color: #333333;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+li:nth-child(odd) {
+  background-color: #3c3c3c;
+}
+
+button#more {
+  width: 100%;
+  padding: 1rem;
+  flex-grow: 0;
+  cursor: pointer;
+  background: #333333;
+  font-size: 1.5rem;
+  color: white;
+  border: none;
+}
+
+button#more:hover {
+  color: #c5d4f0;
+}
+
+button#more:disabled {
+  background-color: #1c1c1c;
+  color: #c5d4f0;
+  cursor: auto;
+}

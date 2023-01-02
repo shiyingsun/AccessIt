@@ -5,50 +5,81 @@
 {% endblock %}
 
 {% block content %}
-    <div id="googleMap" style="width:100%;height:400px"></div>
+    <div id="container">
+      <div id="googleMap" style="width:100%;height:400px;flex-basis: 0;flex-grow: 4;"></div>
+      <div id="sidebar">
+        <h2>Results</h2>
+        <ul id="places"></ul>
+        <button id="more">Load more results</button>
+      </div>
+    </div>
 <script>
-let map;
-let service;
-let infowindow;
-
 function initMap() {
-  const sydney = new google.maps.LatLng(-33.867, 151.195);
-
-  infowindow = new google.maps.InfoWindow();
-  map = new google.maps.Map(document.getElementById("googleMap"), {
-    center: sydney,
-    zoom: 15,
+    const pyrmont = { lat: -33.866, lng: 151.196 };
+    map = new google.maps.Map(document.getElementById("googleMap"), {
+        center: pyrmont,
+        zoom: 15,
+        mapId: "8d193001f940fde3",
   });
 
-  const request = {
-    query: "Museum of Contemporary Art Australia",
-    fields: ["name", "geometry","formatted_address","opening_hours","rating"],
+   const service = new google.maps.places.PlacesService(map);
+  let getNextPage;
+  const moreButton = document.getElementById("more");
+
+  moreButton.onclick = function () {
+    moreButton.disabled = true;
+    if (getNextPage) {
+      getNextPage();
+    }
   };
 
-  service = new google.maps.places.PlacesService(map);
-  service.findPlaceFromQuery(request, (results, status) => {
-    if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-      for (let i = 0; i < results.length; i++) {
-        createMarker(results[i]);
-      }
+  // Perform a nearby search.
+  service.nearbySearch(
+    { location: pyrmont, radius: 500, type: "store" },
+    (results, status, pagination) => {
+      if (status !== "OK" || !results) return;
 
-      map.setCenter(results[0].geometry.location);
+      addPlaces(results, map);
+      moreButton.disabled = !pagination || !pagination.hasNextPage;
+      if (pagination && pagination.hasNextPage) {
+        getNextPage = () => {
+          // Note: nextPage will call the same handler function as the initial call
+          pagination.nextPage();
+        };
+      }
     }
-  });
+  );
 }
 
-function createMarker(place) {
-  if (!place.geometry || !place.geometry.location) return;
+function addPlaces(places, map) {
+  const placesList = document.getElementById("places");
 
-  const marker = new google.maps.Marker({
-    map,
-    position: place.geometry.location,
-  });
+  for (const place of places) {
+    if (place.geometry && place.geometry.location) {
+      const image = {
+        url: place.icon,
+        size: new google.maps.Size(71, 71),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(17, 34),
+        scaledSize: new google.maps.Size(25, 25),
+      };
 
-  google.maps.event.addListener(marker, "click", () => {
-    infowindow.setContent(place.name || "");
-    infowindow.open(map);
-  });
+      new google.maps.Marker({
+        map,
+        icon: image,
+        title: place.name,
+        position: place.geometry.location,
+      });
+
+      const li = document.createElement("li");
+
+      li.textContent = place.name;
+      placesList.appendChild(li);
+      li.addEventListener("click", () => {
+        map.setCenter(place.geometry.location);
+      });
+    }
+  }
 }
 
 window.initMap = initMap;
