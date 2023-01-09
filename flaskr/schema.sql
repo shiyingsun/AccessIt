@@ -14,8 +14,6 @@ CREATE TABLE post (
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   title TEXT NOT NULL,
   body TEXT NOT NULL,
+  reputation INTEGER NOT NULL DEFAULT 0,
   FOREIGN KEY (author_id) REFERENCES user (id)
 );
-
-ALTER TABLE user
-ADD email varchar(255) NOT NULL

@@ -13,7 +13,7 @@ bp = Blueprint('blog', __name__)
 def index():
     db = get_db()
     posts = db.execute(
-        'SELECT p.id, title, body, created, author_id, username'
+        'SELECT p.id, title, body, created, author_id, username, reputation'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' ORDER BY created DESC'
     ).fetchall()
@@ -48,7 +48,7 @@ def create():
 
 def get_post(id, check_author=True):
     post = get_db().execute(
-        'SELECT p.id, title, body, created, author_id, username'
+        'SELECT p.id, title, body, created, author_id, username,reputation'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' WHERE p.id = ?',
         (id,)
@@ -101,21 +101,37 @@ def delete(id):
     return redirect(url_for('blog.index'))
 
 
-@bp.route('/googlemaps')
+@bp.route('/googlemaps', methods=('POST','GET'))
 def googlemaps():
     return render_template('blog/googlemaps.html')
     return redirect(url_for('blog.index'))
 
 
-@bp.route('/', methods=('POST',))
+@bp.route('/voting/<int:id>', methods=('POST',))
 @login_required
-def voting(reputation):
+def voting(id):
+    post = get_post(id)
+    reputation = post['reputation']
     if request.method == 'POST':
         if request.form['votebutton'] == 'upvote':
-            reputation += 1
-            print(reputation)
+            db = get_db()
+            db.execute(
+                'UPDATE post '
+                'SET reputation = (reputation+1) '
+                'WHERE id = ?',
+                (id,)
+            )
+            db.commit()
         elif request.form['votebutton'] == 'downvote':
-            if reputation >= 0:
-                reputation -= 1
-                print(reputation)
-        return reputation
+            if reputation > 0:
+                db = get_db()
+                db.execute(
+                    'UPDATE post '
+                    'SET reputation = (reputation-1) '
+                    'WHERE id = ?',
+                    (id,)
+                )
+                db.commit()
+            else:
+                flash("Reputation cannot go below 0")
+        return redirect("/")
