@@ -101,10 +101,22 @@ def delete(id):
     return redirect(url_for('blog.index'))
 
 
-@bp.route('/googlemaps', methods=('POST','GET'))
+@bp.route('/googlemaps', methods=('POST', 'GET'))
 def googlemaps():
     return render_template('blog/googlemaps.html')
     return redirect(url_for('blog.index'))
+
+@bp.route('/googlemaps/<int:lat>/<int:lnd>/<int:id>', methods=('POST', 'GET'))
+def setplace(lat,lnd,id):
+    db = get_db()
+    db.execute(
+        'UPDATE post '
+        'SET latitude = lat AND lontitude = lnd'
+        'WHERE id = ?',
+        (id,)
+    )
+    db.commit()
+    return redirect("/")
 
 
 @bp.route('/voting/<int:id>', methods=('POST',))

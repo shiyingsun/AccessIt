@@ -23,8 +23,8 @@
         {% endif %}
       </header>
         <p class="body">{{ post['body'] }}</p>
-        <form action="/voting/1" method="POST"><input class="vote" type ="submit" name ="votebutton" value="upvote"></form>
-        <form action="/voting/1" method="POST"><input class="vote" type ="submit" name ="votebutton" value ="downvote"></form>
+        <form action="/voting/{{ post['id'] }}" method="POST"><input class="vote" type ="submit" name ="votebutton" value="upvote"></form>
+        <form action="/voting/{{ post['id'] }}" method="POST"><input class="vote" type ="submit" name ="votebutton" value ="downvote"></form>
     </article>
     {% if not loop.last %}
       <hr>

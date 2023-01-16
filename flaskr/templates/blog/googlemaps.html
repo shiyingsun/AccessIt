@@ -2,9 +2,11 @@
 
 {% block header %}
     <h1>{% block title %}Google Maps{% endblock %}</h1>
+    <script type="module" src="java.js"></script>
 {% endblock %}
 
 {% block content %}
+    <body>
     <div id="container">
       <div id="googleMap" style="width:100%;height:400px;flex-basis: 0;flex-grow: 4;"></div>
       <div id="sidebar">
@@ -13,153 +15,32 @@
         <button id="more">Load more results</button>
       </div>
     </div>
-<script>
-function initMap() {
-    const brighton = { lat: 50.8229402, lng: -0.1362672 };
-    map = new google.maps.Map(document.getElementById("googleMap"), {
-        center: brighton,
-        zoom: 15,
-        mapId: "8d193001f940fde3",
-  });
-    geocoder = new google.maps.Geocoder();
-
-    const service = new google.maps.places.PlacesService(map);
-  let getNextPage;
-  const moreButton = document.getElementById("more");
-
-  moreButton.onclick = function () {
-    moreButton.disabled = true;
-    if (getNextPage) {
-      getNextPage();
-    }
-  };
-
-  // Perform a nearby search.
-  service.nearbySearch(
-    { location: brighton, radius: 500, type: "store" },
-    (results, status, pagination) => {
-      if (status !== "OK" || !results) return;
-
-      addPlaces(results, map);
-      moreButton.disabled = !pagination || !pagination.hasNextPage;
-      if (pagination && pagination.hasNextPage) {
-        getNextPage = () => {
-          // Note: nextPage will call the same handler function as the initial call
-          pagination.nextPage();
-        };
-      }
-    }
-  );
-
-  const inputText = document.createElement("input");
-
-  inputText.type = "text";
-  inputText.placeholder = "Enter a location";
-
-  const submitButton = document.createElement("input");
-
-  submitButton.type = "button";
-  submitButton.value = "Geocode";
-  submitButton.classList.add("button", "button-primary");
-
-  const clearButton = document.createElement("input");
-
-  clearButton.type = "button";
-  clearButton.value = "Clear";
-  clearButton.classList.add("button", "button-secondary");
-  response = document.createElement("pre");
-  response.id = "response";
-  response.innerText = "";
-  responseDiv = document.createElement("div");
-  responseDiv.id = "response-container";
-  responseDiv.appendChild(response);
-
-  const instructionsElement = document.createElement("p");
-
-  instructionsElement.id = "instructions";
-  instructionsElement.innerHTML =
-    "<strong>Instructions</strong>: Enter an address in the textbox to geocode or click on the map to reverse geocode.";
-
-  map.controls[google.maps.ControlPosition.TOP_LEFT].push(inputText);
-  map.controls[google.maps.ControlPosition.TOP_LEFT].push(submitButton);
-  map.controls[google.maps.ControlPosition.TOP_LEFT].push(clearButton);
-  map.controls[google.maps.ControlPosition.LEFT_TOP].push(instructionsElement);
-  map.controls[google.maps.ControlPosition.LEFT_TOP].push(responseDiv);
-  marker = new google.maps.Marker({
-    map,
-  });
-  map.addListener("click", (e) => {
-    geocode({ location: e.latLng });
-  });
-  submitButton.addEventListener("click", () =>
-    geocode({ address: inputText.value })
-  );
-  clearButton.addEventListener("click", () => {
-    clear();
-  });
-  clear();
-}
-
-function addPlaces(places, map) {
-  const placesList = document.getElementById("places");
-
-  for (const place of places) {
-    if (place.geometry && place.geometry.location) {
-      const image = {
-        url: place.icon,
-        size: new google.maps.Size(71, 71),
-        origin: new google.maps.Point(0, 0),
-        anchor: new google.maps.Point(17, 34),
-        scaledSize: new google.maps.Size(25, 25),
-      };
-
-      new google.maps.Marker({
-        map,
-        icon: image,
-        title: place.name,
-        position: place.geometry.location,
-      });
-
-      const li = document.createElement("li");
-
-      li.textContent = place.name;
-      placesList.appendChild(li);
-      li.addEventListener("click", () => {
-        map.setCenter(place.geometry.location);
-      });
-    }
-  }
-}
-
-function clear() {
-  marker.setMap(null);
-  responseDiv.style.display = "none";
-}
-
-function geocode(request) {
-  clear();
-  geocoder
-    .geocode(request)
-    .then((result) => {
-      const { results } = result;
-
-      map.setCenter(results[0].geometry.location);
-      marker.setPosition(results[0].geometry.location);
-      marker.setMap(map);
-      responseDiv.style.display = "block";
-      response.innerText = JSON.stringify(result, null, 2);
-      return results;
-    })
-    .catch((e) => {
-      alert("Geocode was not successful for the following reason: " + e);
-    });
-}
-
-window.initMap = initMap;
-
-</script>
-
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCc2JFzPYuC8YoVXD7xA6f4RRCPDCAFyYw&callback=initMap&libraries=places&v=weekly"defer></script>
+    <div>
+        <h2>Reviews</h2>
+      {% for post in posts %}
+    <article class="post">
+      <header>
+        <div>
+            <h1>{{ post['title'] }}</h1>
+            <div class="about">by {{ post['username'] }} on {{ post['created'].strftime('%Y-%m-%d') }}</div>
+            <div class="reputation"> Post Reputation: {{ post['reputation'] }}</div>
+        </div>
+        <!--This checks if the user is the one who made the post, if so, it gives the user the option to edit the post-->
+        {% if g.user['id'] == post['author_id'] %}
+          <a class="action" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
+        {% endif %}
+      </header>
+        <p class="body">{{ post['body'] }}</p>
+        <form action="/voting/{{ post['id'] }}" method="POST"><input class="vote" type ="submit" name ="votebutton" value="upvote"></form>
+        <form action="/voting/{{ post['id'] }}" method="POST"><input class="vote" type ="submit" name ="votebutton" value ="downvote"></form>
+    </article>
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+    </div>
+    </body>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCc2JFzPYuC8YoVXD7xA6f4RRCPDCAFyYw&callback=initMap&libraries=places&v=weekly"defer></script>
 
 {% endblock %}
 </html>
