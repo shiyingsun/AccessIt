@@ -26,19 +26,23 @@ def create():
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
+        latlng = request.form['latlng']
         error = None
 
         if not title:
             error = 'Title is required.'
+
+        if not latlng:
+            error = 'Pleas enter place reviewed.'
 
         if error is not None:
             flash(error)
         else:
             db = get_db()
             db.execute(
-                'INSERT INTO post (title, body, author_id)'
-                ' VALUES (?, ?, ?)',
-                (title, body, g.user['id'])
+                'INSERT INTO post (title, body, author_id,latlng)'
+                ' VALUES (?, ?, ?,?)',
+                (title, body, g.user['id'], latlng)
             )
             db.commit()
             return redirect(url_for('blog.index'))
@@ -103,21 +107,14 @@ def delete(id):
 
 @bp.route('/googlemaps', methods=('POST', 'GET'))
 def googlemaps():
+    db = get_db()
+    posts = db.execute(
+        'SELECT p.id, title, body, created, author_id, username, reputation'
+        ' FROM post p JOIN user u ON p.author_id = u.id'
+        ' ORDER BY created DESC'
+    ).fetchall()
     return render_template('blog/googlemaps.html')
     return redirect(url_for('blog.index'))
-
-@bp.route('/googlemaps/<int:lat>/<int:lnd>/<int:id>', methods=('POST', 'GET'))
-def setplace(lat,lnd,id):
-    db = get_db()
-    db.execute(
-        'UPDATE post '
-        'SET latitude = lat AND lontitude = lnd'
-        'WHERE id = ?',
-        (id,)
-    )
-    db.commit()
-    return redirect("/")
-
 
 @bp.route('/voting/<int:id>', methods=('POST',))
 @login_required

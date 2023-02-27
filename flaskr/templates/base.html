@@ -25,11 +25,11 @@
   <header>
     {% block header %}{% endblock %}
   </header>
-  <!--<section class = "images">
-    <image src="{{url_for('static',filename = 'images/pavilion.jpg')}}"></image>
-  </section>-->
   {% for message in get_flashed_messages() %}
     <div class="flash">{{ message }}</div>
   {% endfor %}
   {% block content %}{% endblock %}
 </section>
+<footer>
+    <script type="module" src="java.js"></script>
+</footer>
