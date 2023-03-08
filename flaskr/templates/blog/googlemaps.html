@@ -5,63 +5,93 @@
 {% endblock %}
 
 {% block content %}
+    <!-- -->
     <body>
     <div id="container">
-      <div id="googleMap" style="width:100%;height:400px;flex-basis: 0;flex-grow: 4;"></div>
+        <!-- this dive contains the Google map and the sidebar-->
+        <div id="googleMap" style="width:100%;height:400px;flex-basis: 0;flex-grow: 4;"></div>
         <div id="sidebar">
         <h2>Results</h2>
         <ul id="places"></ul>
         <button id="more">Load more results</button>
       </div>
     </div>
+
+    <!-- this is where you can filter the posts to the place you want -->
+    <label for="latlng">Coordinates</label>
+    <input name="latlng" id="latlng" type="text" value=""/>
+    <button id="filter_button">Filter</button>
+
+    <h2>Reviews</h2>
+    {% if g.user %}
+        <a class="action" href="{{ url_for('blog.create') }}">New</a>
+    {% endif %}
     {% for post in posts %}
-    <article class="post">
-      <header>
-        <div>
-            <h1>{{ post['title'] }}</h1>
-            <div class="about">by {{ post['username'] }} on {{ post['created'].strftime('%Y-%m-%d') }}</div>
-            <div class="reputation"> Post Reputation: {{ post['reputation'] }}</div>
-            <div class="reputation"> Coordinates: {{ post['latlng'] }} </div>
-        </div>
-        <!--This checks if the user is the one who made the post, if so, it gives the user the option to edit the post-->
-        {% if g.user['id'] == post['author_id'] %}
-          <a class="action" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
-        {% endif %}
-      </header>
-        <p class="body">{{ post['body'] }}</p>
-        <form action="/voting/{{ post['id'] }}" method="POST"><input class="vote" type ="submit" name ="votebutton" value="upvote"></form>
-        <form action="/voting/{{ post['id'] }}" method="POST"><input class="vote" type ="submit" name ="votebutton" value ="downvote"></form>
-    </article>
+        <!-- this loops through all the posts and formats them and outputs them -->
+        <article class="post">
+            <div class="{{ post['latlng'] }}">
+                <header>
+                    <!-- shows the details of the post -->
+                    <h1>{{ post['title'] }}</h1>
+                    <div class="about">by {{ post['username'] }} on {{ post['created'].strftime('%Y-%m-%d') }}</div>
+                    <div class="reputation"> Post Reputation: {{ post['reputation'] }}</div>
+                    <div class="reputation"> Coordinates: {{ post['latlng'] }} </div>
+                    <div class="address"> Address: {{ post['address'] }}</div>
+                    <!--This checks if the user is the one who made the post, if so, it gives the user the option to edit the post-->
+                    {% if g.user['id'] == post['author_id'] %}
+                        <a class="action" href="{{ url_for('blog.update', id=post['id']) }}">Edit</a>
+                    {% endif %}
+                </header>
+                <p class="body">{{ post['body'] }}</p>
+                <form action="/voting/{{ post['id'] }}" method="POST"><input class="vote" type ="submit" name ="votebutton" value="upvote"></form>
+                <form action="/voting/{{ post['id'] }}" method="POST"><input class="vote" type ="submit" name ="votebutton" value ="downvote"></form>
+            </div>
+            </article>
     {% if not loop.last %}
       <hr>
     {% endif %}
   {% endfor %}
-    <h2>Reviews</h2>
-    <p>This is a review</p>
-    {% if g.user %}
-        <a class="action" href="{{ url_for('blog.create') }}">New</a>
-    {% endif %}
     </body>
     <script>
-        function initMap() {
-    const brighton = { lat: 50.8229402, lng: -0.1362672 };
-    map = new google.maps.Map(document.getElementById("googleMap"), {
-        center: brighton,
-        zoom: 15,
-        mapId: "8d193001f940fde3",
-  });
-    geocoder = new google.maps.Geocoder();
-
-    const service = new google.maps.places.PlacesService(map);
-  let getNextPage;
-  const moreButton = document.getElementById("more");
-
-  moreButton.onclick = function () {
-    moreButton.disabled = true;
-    if (getNextPage) {
-      getNextPage();
+    function filter(){
+        // use getElementsByClass to get all elements with class=review_latlng where latlng is the content of the input box with id latlng
+        // loop over all the elements returned and set their display property to 'none'
+        var increment = 0;
+        {% for post in posts %}
+            if (({{ post['latlng'] }}) !== (document.getElementById("latlng").value)){
+                console.log(document.getElementsByClassName("{{ post['latlng'] }}"));
+                console.log(document.getElementById("latlng").value);
+                document.getElementsByClassName("{{ post['latlng'] }}")[increment].style.display = "none";
+                increment = increment + 1
+                console.log(increment)
+            }
+            else{
+                document.getElementsByClassName("{{ post['latlng'] }}")[increment].style.display = "block";
+            }
+        {% endfor %}
     }
-  };
+    document.getElementById("filter_button").addEventListener("click", filter);
+
+    // creates the map and centres it in brighton
+    function initMap() {
+        const brighton = { lat: 50.8229402, lng: -0.1362672 };
+        map = new google.maps.Map(document.getElementById("googleMap"), {
+            center: brighton,
+            zoom: 15,
+            mapId: "8d193001f940fde3",
+        });
+        geocoder = new google.maps.Geocoder();
+
+        const service = new google.maps.places.PlacesService(map);
+        let getNextPage;
+        const moreButton = document.getElementById("more");
+
+        moreButton.onclick = function () {
+            moreButton.disabled = true;
+            if (getNextPage) {
+                getNextPage();
+            }
+        };
 
   // Perform a nearby search.
   service.nearbySearch(
@@ -73,24 +103,27 @@
       moreButton.disabled = !pagination || !pagination.hasNextPage;
       if (pagination && pagination.hasNextPage) {
         getNextPage = () => {
-          // Note: nextPage will call the same handler function as the initial call
+          // nextPage will call the same handler function as the initial call
           pagination.nextPage();
         };
       }
     }
   );
 
+  // input box for searching a location
   const inputText = document.createElement("input");
 
   inputText.type = "text";
   inputText.placeholder = "Enter a location";
 
+  // button for submiting the search
   const submitButton = document.createElement("input");
 
   submitButton.type = "button";
   submitButton.value = "Search";
   submitButton.classList.add("button", "button-primary");
 
+  // button to clear the input and all info gained
   const clearButton = document.createElement("input");
 
   clearButton.type = "button";
@@ -129,8 +162,9 @@
   clear();
 }
 
+// add markers to the nearby places to the centre
 function addPlaces(places, map) {
-  const placesList = document.getElementById("places");
+        const placesList = document.getElementById("places");
 
   for (const place of places) {
     if (place.geometry && place.geometry.location) {
@@ -160,11 +194,42 @@ function addPlaces(places, map) {
   }
 }
 
+// reverse geocoder to get the address from the coordinates
+function geocodeLatLng(geocoder, map, infowindow) {
+  const input = document.getElementById("latlng").value;
+  const latlngStr = input.split(",", 2);
+  const latlng = {
+    lat: parseFloat(latlngStr[0]),
+    lng: parseFloat(latlngStr[1]),
+  };
+
+  geocoder
+    .geocode({ location: latlng })
+    .then((response) => {
+      if (response.results[0]) {
+        map.setZoom(11);
+
+        const marker = new google.maps.Marker({
+          position: latlng,
+          map: map,
+        });
+
+        infowindow.setContent(response.results[0].formatted_address);
+        infowindow.open(map, marker);
+        document.getElementById("address").value = response.results[0].formatted_address;
+      } else {
+        window.alert("No results found");
+      }
+    })
+    .catch((e) => window.alert("Geocoder failed due to: " + e));
+}
+
 function clear() {
   marker.setMap(null);
   responseDiv.style.display = "none";
 }
 
+// geocoder, gets latlng from searching a place
 function geocode(request) {
   clear();
   geocoder
@@ -175,24 +240,22 @@ function geocode(request) {
       map.setCenter(results[0].geometry.location);
       marker.setPosition(results[0].geometry.location);
       lat = results[0].geometry.location.lat();
-      lnd = results[0].geometry.location.lng();
-      coords = results[0].geometry.location;
-      alert(coords);
+      lng = results[0].geometry.location.lng();
+      document.getElementById("latlng").value = lat+","+lng;
+      postlatlng = lat+","+lng
       marker.setMap(map);
       responseDiv.style.display = "block";
       response.innerText = JSON.stringify(result, null, 2);
-      return results, lat, lnd;
+      return results, postlatlng;
     })
     .catch((e) => {
       alert("Geocode was not successful for the following reason: " + e);
     });
 }
 
-console.log(lat, lnd)
-
 window.initMap = initMap;
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCc2JFzPYuC8YoVXD7xA6f4RRCPDCAFyYw&callback=initMap&libraries=places&v=weekly"defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkwvrt9GivI7hVb8bbYQUTmwCZjj3laK8&callback=initMap&libraries=places&v=weekly"defer></script>
 
 {% endblock %}
 </html>

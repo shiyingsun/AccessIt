@@ -16,5 +16,6 @@ CREATE TABLE post (
   body TEXT NOT NULL,
   reputation INTEGER NOT NULL DEFAULT 0,
   latlng TEXT NOT NULL,
+  address TEXT NOT NULL,
   FOREIGN KEY (author_id) REFERENCES user (id)
 );

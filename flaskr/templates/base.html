@@ -6,6 +6,7 @@
     <br>
     <h3>Helping you access the world</h3>
 </div>
+<!-- nav bar - different depending on if you've signed in or not -->
 <nav>
   <ul>
     {% if g.user %}
@@ -22,6 +23,7 @@
   </ul>
 </nav>
 <section class="content">
+<!-- allows other pages to extend it while maintaining its orginal theme -->
   <header>
     {% block header %}{% endblock %}
   </header>

@@ -273,3 +273,5 @@ input[type=button].button-secondary:hover {
   padding: 1rem;
   font-size: medium;
 }
+
+.hidden { display: none; }
