@@ -10,6 +10,7 @@ bp = Blueprint('blog', __name__)
 
 
 @bp.route('/')
+# function to get the posts and all the infomation when
 def index():
     db = get_db()
     posts = db.execute(
@@ -22,6 +23,7 @@ def index():
 
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
+# function to allow you to create a post - need to be logged into your account
 def create():
     if request.method == 'POST':
         title = request.form['title']
@@ -50,7 +52,7 @@ def create():
 
     return render_template('blog/create.html')
 
-
+# function used to get a specific post with id and making sure the user is the author of the post
 def get_post(id, check_author=True):
     post = get_db().execute(
         'SELECT p.id, title, body, created, author_id, username,reputation,latlng, address'
@@ -70,6 +72,7 @@ def get_post(id, check_author=True):
 
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
+# function to update a post - uses the get_post function
 def update(id):
     post = get_post(id)
 
@@ -98,6 +101,7 @@ def update(id):
 
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
+# function that accesses SQL and deletes a post - uses get_post
 def delete(id):
     get_post(id)
     db = get_db()
@@ -107,6 +111,7 @@ def delete(id):
 
 
 @bp.route('/googlemaps', methods=('POST', 'GET'))
+# similar to index function which allows you to output posts on googlemaps page
 def googlemaps():
     db = get_db()
     posts = db.execute(
@@ -119,6 +124,7 @@ def googlemaps():
 
 @bp.route('/voting/<int:id>', methods=('POST',))
 @login_required
+# function to allow users to "upvote" or "downvote" on posts - doesn't allow reputation to go below 0
 def voting(id):
     post = get_post(id)
     reputation = post['reputation']

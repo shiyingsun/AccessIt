@@ -27,7 +27,7 @@
         <a class="action" href="{{ url_for('blog.create') }}">New</a>
     {% endif %}
     {% for post in posts %}
-        <!-- this loops through all the posts and formats them and outputs them -->
+        <!-- loops through all the posts and formats them and outputs them -->
         <article class="post">
             <div class="{{ post['latlng'] }}">
                 <header>

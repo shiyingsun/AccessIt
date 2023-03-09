@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- used so the all the different pages can extend base.html and have the same format so the posts look consistant-->
 <title>{% block title %}Flaskr{% endblock %}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <div class="header">
@@ -15,6 +16,7 @@
         <li class = "navbar"><a href="{{ url_for('blog.index') }}">Reviews</a></li>
         <li class = "navbar"><a href="{{ url_for('blog.googlemaps') }}">Google Maps</a></li>
     {% else %}
+        <!-- shows the register and login tap when you aren't logged in -->
         <li class = "navbar"><a href="{{ url_for('auth.register') }}">Register</a></li>
         <li class = "navbar"><a href="{{ url_for('auth.login') }}">Log In</a></li>
         <li class = "navbar"><a href="{{ url_for('blog.index') }}">Reviews</a></li>
@@ -27,6 +29,7 @@
   <header>
     {% block header %}{% endblock %}
   </header>
+<!-- allows errors to be caught and flashed at the top of the page in the same format -->
   {% for message in get_flashed_messages() %}
     <div class="flash">{{ message }}</div>
   {% endfor %}

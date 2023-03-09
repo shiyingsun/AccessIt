@@ -1,3 +1,4 @@
+/* all formatting the body, posts and content of the page */
 html { font-family: sans-serif; background: #eee; padding: 1rem; }
 body {height: 100%;margin: 0;padding: 0;}
 h1 { font-family: serif; color: #000000; margin: 1rem 0; }
@@ -39,6 +40,7 @@ hr { border: none; border-top: 1px solid lightgray; }
   background-color: #3C6E71;
   color: white;
 }
+/* formatting for nav bar */
 ul {
   list-style-type: none;
   margin: 0;
@@ -146,6 +148,7 @@ input[type=submit] { align-self: start; min-width: 10em; }
   display: flex;
 }
 
+/* formatting sidebar of google maps*/
 #sidebar {
   flex-basis: 5rem;
   flex-grow: 1;
@@ -261,6 +264,7 @@ input[type=button].button-secondary:hover {
   font-size: small;
 }
 
+/* the formatting for the instruction in google map*/
 #instructions {
   background-color: #fff;
   border: 0;

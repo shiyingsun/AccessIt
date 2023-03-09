@@ -8,7 +8,6 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
-        #UPLOAD_FOLDER=os.path.join('static','images')
     )
 
 
@@ -25,9 +24,7 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # image1 = os.path.join(app.config['UPLOAD_FOLDER'],'pavilion.jpg')
-    # return image1
-
+    # imports all the python files
     from . import db
     db.init_app(app)
 

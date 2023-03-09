@@ -106,6 +106,7 @@ def load_logged_in_user():
         ).fetchone()
 
 @bp.route('/logout')
+# clears the session and redirects the user back to the index page
 def logout():
     session.clear()
     return redirect(url_for('index'))
