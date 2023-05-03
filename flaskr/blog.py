@@ -10,11 +10,11 @@ bp = Blueprint('blog', __name__)
 
 
 @bp.route('/')
-# function to get the posts and all the infomation when
+# function to get the posts and all the information when
 def index():
     db = get_db()
     posts = db.execute(
-        'SELECT p.id, title, body, created, author_id, username, reputation,latlng,address'
+        ' SELECT p.id, title, body, created, author_id, username, reputation,latlng,address'
         ' FROM post p JOIN user u ON p.author_id = u.id'
         ' ORDER BY created DESC'
     ).fetchall()
@@ -32,11 +32,12 @@ def create():
         address = request.form['address']
         error = None
 
+        # throws errors if required fields aren't filled in
         if not title:
             error = 'Title is required.'
 
         if not latlng:
-            error = 'Pleas enter place reviewed.'
+            error = 'Please enter place reviewed.'
 
         if error is not None:
             flash(error)
@@ -87,6 +88,7 @@ def update(id):
         if error is not None:
             flash(error)
         else:
+            #updating database
             db = get_db()
             db.execute(
                 'UPDATE post SET title = ?, body = ?'

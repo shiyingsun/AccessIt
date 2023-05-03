@@ -53,6 +53,8 @@
   {% endfor %}
     </body>
     <script>
+    // I looked at the Google Maps API documentation and used the code provided, added different parts together and edited it
+
     function filter(){
         // use getElementsByClass to get all elements with class=review_latlng where latlng is the content of the input box with id latlng
         // loop over all the elements returned and set their display property to 'none'
@@ -223,7 +225,7 @@ function geocodeLatLng(geocoder, map, infowindow) {
     })
     .catch((e) => window.alert("Geocoder failed due to: " + e));
 }
-
+// function clears the current address being geocoded
 function clear() {
   marker.setMap(null);
   responseDiv.style.display = "none";

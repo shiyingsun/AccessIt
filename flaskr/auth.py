@@ -112,6 +112,7 @@ def logout():
     return redirect(url_for('index'))
 
 def login_required(view):
+    # the user needs to be logged in for some actions - redirects users to login page
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
